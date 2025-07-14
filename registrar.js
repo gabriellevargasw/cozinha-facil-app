@@ -1,60 +1,102 @@
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useState } from 'react';
-import estilo from './estilo';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from './Firebase';
 
 export default function Registrar({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [repetirSenha, setRepetirSenha] = useState('');
+  const [mensagemErro, setMensagemErro] = useState('');
 
-  const confirmar = () => {
-    if (!email || !senha || !repetirSenha) {
-      Alert.alert('Erro', 'Preencha todos os campos.');
-      return;
-    }
-
-    if (senha !== repetirSenha) {
-      Alert.alert('Erro', 'As senhas não coincidem.');
-      return;
-    }
-
-    Alert.alert('Sucesso', 'Conta criada com sucesso!');
+  const registrar = () => {
+    createUserWithEmailAndPassword(auth, email, senha)
+      .then(() => {
+        navigation.navigate('Login');
+      })
+      .catch(erro => {
+        setMensagemErro('Erro ao registrar: ' + erro.message);
+      });
   };
 
   return (
-    <View style={estilo.container}>
-      <Text style={estilo.titulo}>Criar conta</Text>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Cozinha Fácil</Text>
+      <Text style={styles.subtitulo}>Crie sua conta</Text>
 
       <TextInput
-        style={estilo.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
+        style={styles.input}
+        placeholder="Email"  value={email}  onChangeText={setEmail} autoCapitalize="none"  keyboardType="email-address"/>
 
       <TextInput
-        style={estilo.input}
-        placeholder="Senha"
-        secureTextEntry
-        value={senha}
-        onChangeText={setSenha}
-      />
+        style={styles.input}
+        placeholder="Senha" secureTextEntry value={senha} onChangeText={setSenha}/>
 
-      <TextInput
-        style={estilo.input}
-        placeholder="Repetir Senha"
-        secureTextEntry
-        value={repetirSenha}
-        onChangeText={setRepetirSenha}
-      />
-
-      <TouchableOpacity style={estilo.botao} onPress={confirmar}>
-        <Text style={estilo.textoBotao}>CONFIRMAR</Text>
+      <TouchableOpacity style={styles.botao} onPress={registrar}>
+        <Text style={styles.textoBotao}> Registrar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={estilo.botao1} onPress={() => navigation.navigate('Login')}>
-        <Text style={estilo.textoBotao}>VOLTAR</Text>
+      {mensagemErro !== '' && (
+        <Text style={styles.erro}>{mensagemErro}</Text>
+      )}
+
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.link}>Já tem conta? Faça login</Text>
       </TouchableOpacity>
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFDF5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  titulo: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#D32F2F',
+    marginBottom: 5,
+  },
+  subtitulo: {
+    fontSize: 16,
+    color: '#795548',
+    marginBottom: 30,
+  },
+  input: {
+    width: '85%',
+    borderWidth: 1,
+    borderColor: '#D7CCC8',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 8,
+  },
+  botao: {
+    backgroundColor: '#FFA726',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 12,
+    marginTop: 20,
+    width: '85%',
+    alignItems: 'center',
+  },
+  textoBotao: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  erro: {
+    color: 'red',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  link: {
+    color: '#1976D2',
+    fontWeight: 'bold',
+    marginTop: 15,
+  },
+});

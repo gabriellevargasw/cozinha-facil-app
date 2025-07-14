@@ -4,6 +4,7 @@ import Splash from './splash';
 import Login from './login';
 import Inicio from './inicio';
 import Buscarreceitas from './buscarreceitas';
+import Detalhesreceitas from './detalhesreceitas';
 import Receitaaleatoria from './receitaaleatoria';
 import Registrar from './registrar'; 
 import Esqueceuasenha from './esqueceuasenha';
@@ -20,6 +21,7 @@ export default function App() {
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Inicio" component={Inicio} options={{ headerShown: false }}/>
         <Stack.Screen name="Buscarreceitas" component={Buscarreceitas} options={{ headerShown: false }} />
+        <Stack.Screen name="Detalhesreceitas" component={Detalhesreceitas} options={{ headerShown: false }}/>
         <Stack.Screen name="Receitaaleatoria" component={Receitaaleatoria} options={{ headerShown: false }}/>
         <Stack.Screen name="Registrar" component={Registrar} options={{ headerShown: false }}/>
         <Stack.Screen name="Esqueceuasenha" component={Esqueceuasenha} options={{ headerShown: false }} />
