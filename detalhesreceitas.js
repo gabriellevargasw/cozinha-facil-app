@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View,Text,Image,ScrollView,TouchableOpacity,StyleSheet,Alert,} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function DetalhesReceitas({ route }) {
+export default function DetalhesReceita({ route }) {
   const receita = route.params.receita;
 
   const salvarFavorito = async () => {
@@ -20,7 +20,6 @@ export default function DetalhesReceitas({ route }) {
       Alert.alert('Erro ao salvar favorito.');
     }
   };
-
 
   const ingredientes = [];
   for (let i = 1; i <= 20; i++) {

@@ -2,12 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function Inicio({ navigation, route }) {
-  const nome = route.params?.nome || 'Cozinheiro(a)';
+  const nome = route.params?.nome;
 
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}> Cozinha Fácil</Text>
-      <Text style={styles.boasVindas}>Bem-vindo, {nome}!</Text>
+      <Text style={styles.boasVindas}>Bem-vindo(a), {nome}!</Text>
 
       <TouchableOpacity
         style={styles.botao}
@@ -36,7 +36,7 @@ export default function Inicio({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFDF5', // fundo bem claro, tipo creme
+    backgroundColor: '#FFFDF5', // creme
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   botaoFavorito: {
-    backgroundColor: '#FFD54F', // amarelo suave
+    backgroundColor: '#FFA726', // amarelo suave
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 12,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   textoBotaoFavorito: {
-    color: '#5D4037', // marrom escuro
+    color: '#fff', // marrom escuro
     fontSize: 16,
     fontWeight: '600',
   },

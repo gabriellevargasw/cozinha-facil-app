@@ -1,134 +1,123 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { View,Text,TextInput,TouchableOpacity,Image,ScrollView,StyleSheet,Alert,} from 'react-native';
 
 export default function BuscarReceitas() {
-  const [busca, setBusca] = useState('');
+  const [query, setQuery] = useState('');
   const [resultados, setResultados] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [mensagem, setMensagem] = useState('');
+  const [selecionada, setSelecionada] = useState(null);
 
-  const buscarReceitas = async () => {
-    if (!busca.trim()) {
-      setMensagem('Digite o nome de uma receita.');
-      setResultados([]);
-      return;
-    }
-
-    setLoading(true);
-    setMensagem('');
-    setResultados([]);
+  const buscar = async () => {
     try {
-      const res = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(busca)}`);
-      const data = await res.json();
-      if (data.meals) {
-        setResultados(data.meals);
+      const resposta = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`);
+      const dados = await resposta.json();
+      if (dados.meals) {
+        setResultados(dados.meals);
+        setSelecionada(null);
       } else {
-        setMensagem('Nenhuma receita encontrada.');
+        Alert.alert('Nenhuma receita encontrada.');
+        setResultados([]);
+        setSelecionada(null);
       }
     } catch {
-      setMensagem('Erro ao buscar receitas.');
+      Alert.alert('Erro ao buscar receita.');
     }
-    setLoading(false);
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titulo}>Buscar Receitas</Text>
 
       <TextInput
-        style={styles.input}
         placeholder="Digite o nome da receita"
-        value={busca}
-        onChangeText={setBusca}
+        style={styles.input}
+        value={query}
+        onChangeText={setQuery}
       />
 
-      <TouchableOpacity style={styles.botao} onPress={buscarReceitas}>
+      <TouchableOpacity style={styles.botao} onPress={buscar}>
         <Text style={styles.textoBotao}>Buscar</Text>
       </TouchableOpacity>
 
-      {loading && <ActivityIndicator size="large" color="#D32F2F" style={{ marginTop: 20 }} />}
+      {selecionada ? (
+        <View style={styles.detalhes}>
+          <Text style={styles.titulo}>{selecionada.strMeal}</Text>
+          <Image source={{ uri: selecionada.strMealThumb }} style={styles.imagem} />
+          <Text>{selecionada.strInstructions}</Text>
 
-      {mensagem !== '' && <Text style={styles.mensagem}>{mensagem}</Text>}
-
-      <ScrollView contentContainerStyle={styles.resultados}>
-        {resultados.map((item) => (
-          <View key={item.idMeal} style={styles.card}>
-            <Image source={{ uri: item.strMealThumb }} style={styles.imagem} />
-            <Text style={styles.nome}>{item.strMeal}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+          <TouchableOpacity
+            style={styles.botaoVoltar}
+            onPress={() => setSelecionada(null)}
+          >
+            <Text style={styles.textoBotao}>Voltar para lista</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        resultados.map(item => (
+          <TouchableOpacity
+            key={item.idMeal}
+            style={styles.card}
+            onPress={() => setSelecionada(item)}
+          >
+            <Image source={{ uri: item.strMealThumb }} style={styles.imagemPequena} />
+            <Text>{item.strMeal}</Text>
+          </TouchableOpacity>
+        ))
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#FFFDF5',
     padding: 20,
     alignItems: 'center',
+    backgroundColor: '#FFFDF5',
   },
   titulo: {
-    fontSize: 26,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#D32F2F',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   input: {
-    width: '100%',
     borderWidth: 1,
-    borderColor: '#D7CCC8',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 12,
+    borderColor: '#ccc',
+    padding: 10,
+    width: '100%',
     marginBottom: 10,
+    borderRadius: 8,
   },
   botao: {
     backgroundColor: '#FFA726',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 12,
+    padding: 10,
+    borderRadius: 8,
     marginBottom: 20,
   },
   textoBotao: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  mensagem: {
-    marginTop: 10,
-    color: '#D32F2F',
-    fontSize: 14,
-  },
-  resultados: {
-    alignItems: 'center',
-    paddingTop: 10,
+    fontWeight: 'bold',
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
+    marginBottom: 10,
     alignItems: 'center',
-    width: 250,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
+  },
+  imagemPequena: {
+    width: 150,
+    height: 150,
+    borderRadius: 8,
+  },
+  detalhes: {
+    alignItems: 'center',
   },
   imagem: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
+    borderRadius: 8,
+    marginVertical: 10,
+  },
+  botaoVoltar: {
+    marginTop: 20,
+    backgroundColor: '#D32F2F',
+    padding: 10,
     borderRadius: 8,
   },
-  nome: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#5D4037',
-    textAlign: 'center',
-  },
 });
- 
