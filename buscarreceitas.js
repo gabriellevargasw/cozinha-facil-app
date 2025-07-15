@@ -1,25 +1,37 @@
 import React, { useState } from 'react';
-import { View,Text,TextInput,TouchableOpacity,Image,ScrollView,StyleSheet,Alert,} from 'react-native';
+import {View,Text,TextInput,TouchableOpacity,Image,ScrollView,StyleSheet,Alert,ActivityIndicator} from 'react-native';
 
 export default function BuscarReceitas() {
   const [query, setQuery] = useState('');
   const [resultados, setResultados] = useState([]);
-  const [selecionada, setSelecionada] = useState(null);
+  const [carregando, setCarregando] = useState(false);
 
   const buscar = async () => {
+    if (!query.trim()) {
+      Alert.alert('Por favor, digite o nome de uma receita!');
+      return;
+    }
+
+    setCarregando(true);
+    setResultados([]);
+
     try {
-      const resposta = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`);
+      const resposta = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/search.php?s=${query.trim().toLowerCase()}`
+      );
       const dados = await resposta.json();
+
       if (dados.meals) {
         setResultados(dados.meals);
-        setSelecionada(null);
       } else {
-        Alert.alert('Nenhuma receita encontrada.');
+        Alert.alert(`Nenhuma receita encontrada para "${query}".`);
         setResultados([]);
-        setSelecionada(null);
       }
-    } catch {
-      Alert.alert('Erro ao buscar receita.');
+    } catch (error) {
+      Alert.alert('Erro ao buscar receita. Verifique sua conexão.');
+      console.error(error);
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -38,31 +50,16 @@ export default function BuscarReceitas() {
         <Text style={styles.textoBotao}>Buscar</Text>
       </TouchableOpacity>
 
-      {selecionada ? (
-        <View style={styles.detalhes}>
-          <Text style={styles.titulo}>{selecionada.strMeal}</Text>
-          <Image source={{ uri: selecionada.strMealThumb }} style={styles.imagem} />
-          <Text>{selecionada.strInstructions}</Text>
+      {carregando && <ActivityIndicator size="large" color="#FFA726" />}
 
-          <TouchableOpacity
-            style={styles.botaoVoltar}
-            onPress={() => setSelecionada(null)}
-          >
-            <Text style={styles.textoBotao}>Voltar para lista</Text>
-          </TouchableOpacity>
+      {resultados.map(item => (
+        <View key={item.idMeal} style={styles.card}>
+          <Image source={{ uri: item.strMealThumb }} style={styles.imagem} />
+          <Text style={styles.nome}>{item.strMeal}</Text>
+          <Text style={styles.categoria}>Categoria: {item.strCategory}</Text>
+          <Text style={styles.area}>Área: {item.strArea}</Text>
         </View>
-      ) : (
-        resultados.map(item => (
-          <TouchableOpacity
-            key={item.idMeal}
-            style={styles.card}
-            onPress={() => setSelecionada(item)}
-          >
-            <Image source={{ uri: item.strMealThumb }} style={styles.imagemPequena} />
-            <Text>{item.strMeal}</Text>
-          </TouchableOpacity>
-        ))
-      )}
+      ))}
     </ScrollView>
   );
 }
@@ -74,9 +71,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFDF5',
   },
   titulo: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#D32F2F',
   },
   input: {
     borderWidth: 1,
@@ -85,39 +83,43 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 10,
     borderRadius: 8,
+    backgroundColor: '#fff',
   },
   botao: {
     backgroundColor: '#FFA726',
     padding: 10,
     borderRadius: 8,
     marginBottom: 20,
+    alignItems: 'center',
   },
   textoBotao: {
     color: '#fff',
     fontWeight: 'bold',
   },
   card: {
-    marginBottom: 10,
+    marginBottom: 15,
     alignItems: 'center',
-  },
-  imagemPequena: {
-    width: 150,
-    height: 150,
+    backgroundColor: '#fff',
+    padding: 12,
     borderRadius: 8,
-  },
-  detalhes: {
-    alignItems: 'center',
+    width: '100%',
   },
   imagem: {
-    width: 250,
-    height: 250,
+    width: 200,
+    height: 200,
     borderRadius: 8,
-    marginVertical: 10,
   },
-  botaoVoltar: {
-    marginTop: 20,
-    backgroundColor: '#D32F2F',
-    padding: 10,
-    borderRadius: 8,
+  nome: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 8,
+  },
+  categoria: {
+    fontSize: 14,
+    color: '#555',
+  },
+  area: {
+    fontSize: 14,
+    color: '#777',
   },
 });

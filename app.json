@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Cozinha Facil App",
-    "slug": "Cozinha Facil App",
+    "name": "Cozinha-facil-app",
+    "slug": "Cozinha-facil-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/cozinhafacillogo.jpg",
@@ -20,10 +20,16 @@
         "foregroundImage": "./assets/cozinhafacillogo.jpg",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.gabriellevargasw.Cozinhafacilapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b1fafe6b-224b-42fb-893a-7eee6708ff72"
+      }
     }
   }
 }

@@ -6,11 +6,10 @@ import Login from './login';
 import Inicio from './inicio';
 import Buscarreceitas from './buscarreceitas';
 import Receitaaleatoria from './receitaaleatoria';
-import Detalhesreceitas from './detalhesreceitas'
 import Registar from './registrar';
 import Esqueceuasenha from './esqueceuasenha';
-import Logout from './logout'
-import Favoritos from './favoritos'
+
+
 
 
 
