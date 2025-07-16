@@ -1,58 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { auth, db } from './Firebase';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function Favoritos() {
   const [favoritos, setFavoritos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
-  const escutarFavoritos = () => {
-    const user = auth.currentUser;
-
-    if (!user) {
-      setFavoritos([]);
-      setLoading(false);
-      return;
-    }
-
+  const mostrarFavoritos = async () => {
     try {
-      const q = query(
-        collection(db, 'favoritos'),
-        where('uid', '==', user.uid)
-      );
+      const user = auth.currentUser;
 
-      // Escuta em tempo real
-      const unsubscribe = onSnapshot(
-        q,
-        (snapshot) => {
-          const lista = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setFavoritos(lista);
-          setLoading(false);
-        },
-        (err) => {
-          console.error('Erro ao escutar favoritos', err);
-          setErro('Erro ao carregar favoritos.');
-          setLoading(false);
-        }
-      );
+      if (!user) {
+        setFavoritos([]);
+        setLoading(false);
+        return;
+      }
 
-      return unsubscribe; // Para limpar ao desmontar
+      const favoritosRef = collection(db, user.uid);
+      const snapshot = await getDocs(favoritosRef);
+
+      const lista = snapshot.docs.map(doc => ({
+        id: doc.id,
+        thumb: doc.data().strMealThumb || 'https://via.placeholder.com/150',
+        nome: doc.data().strMeal || 'Nome Desconhecido',
+        categoria: doc.data().strCategory || 'Sem categoria',
+        origem: doc.data().strArea || 'Sem origem',
+      }));
+
+      setFavoritos(lista);
     } catch (error) {
-      console.error('Erro ao configurar escuta', error);
-      setErro('Erro ao carregar favoritos.');
+      console.error('Erro ao buscar favoritos:', error);
+      setErro('Erro ao carregar favoritos. Verifique as permissões ou conexão.');
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    setLoading(true);
-    const unsubscribe = escutarFavoritos();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setLoading(true);
+      if (user) {
+        mostrarFavoritos();
+      } else {
+        setFavoritos([]);
+        setLoading(false);
+      }
+    });
 
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   if (loading) {
@@ -71,7 +68,7 @@ export default function Favoritos() {
         <TouchableOpacity onPress={() => {
           setErro(null);
           setLoading(true);
-          escutarFavoritos();
+          mostrarFavoritos();
         }}>
           <Text style={{ color: '#D32F2F', marginTop: 10 }}>Tentar novamente</Text>
         </TouchableOpacity>
@@ -90,7 +87,6 @@ export default function Favoritos() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titulo}>Meus Favoritos</Text>
-
       {favoritos.map((item) => (
         <View key={item.id} style={styles.card}>
           <Image source={{ uri: item.thumb }} style={styles.imagem} />

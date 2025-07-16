@@ -4,11 +4,11 @@
     "slug": "Cozinha-facil-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/cozinhafacillogo.jpg",
+    "icon": "./assets/img/cozinhafacillogo.jpg",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/cozinhafacillogo.jpg",
+      "image": "./assets/img/cozinhafacillogo.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,14 +17,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/cozinhafacillogo.jpg",
+        "foregroundImage": "./assets/img/cozinhafacillogo.jpg",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.gabriellevargasw.Cozinhafacilapp"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/img/favicon.png"
     },
     "extra": {
       "eas": {

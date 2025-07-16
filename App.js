@@ -1,13 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import Splash from './splash';
-import Login from './login';
-import Inicio from './inicio';
-import Buscarreceitas from './buscarreceitas';
-import Receitaaleatoria from './receitaaleatoria';
-import Favoritos from './favoritos';
-import Registrar from './registrar'; 
-import Esqueceuasenha from './esqueceuasenha';
+import Splash from './Telas/splash';
+import Login from './Telas/login';
+import Inicio from './Telas/inicio';
+import Buscarreceitas from './Telas/buscarreceitas';
+import Receitaaleatoria from './Telas/receitaaleatoria';
+import Favoritos from './Telas/favoritos';
+import Registrar from './Telas/registrar'; 
+import Esqueceuasenha from './Telas/esqueceuasenha';
 
 
 const Stack = createNativeStackNavigator();
